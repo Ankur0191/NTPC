@@ -1,3 +1,6 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # ✅ Force TensorFlow to use CPU
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 import numpy as np
