@@ -1,14 +1,25 @@
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # ✅ Force TensorFlow to use CPU
-
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+import os
 import numpy as np
+from pydantic import BaseModel
 from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import MeanSquaredError  # ✅ Fix import issue
 
 # ✅ Initialize FastAPI App
 app = FastAPI()
+
+# 🔹 Allow CORS for All Domains
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 👈 Allow ALL origins (public access)
+    allow_credentials=True,
+    allow_methods=["*"],  # 👈 Allow ALL HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # 👈 Allow ALL headers
+)
+
+# ✅ Force TensorFlow to use CPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 # ✅ Load trained models
 def load_trained_model(model_name):
@@ -16,7 +27,7 @@ def load_trained_model(model_name):
     model_path = f"{model_name}.h5"
     if not os.path.exists(model_path):
         print(f"❌ Model file not found: {model_path}")
-        return None  # ✅ Return None if the model file is missing
+        return None
 
     try:
         print(f"✅ Loading model: {model_path}")
